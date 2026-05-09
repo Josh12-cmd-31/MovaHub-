@@ -492,12 +492,18 @@ export const Newsletter: React.FC<{ onOpenModal?: () => void }> = ({ onOpenModal
 
 export const AdSenseInArticle: React.FC = () => {
   useEffect(() => {
-    try {
-      // @ts-ignore
-      (window.adsbygoogle = window.adsbygoogle || []).push({});
-    } catch (e) {
-      console.error("AdSense injection error:", e);
-    }
+    const timer = setTimeout(() => {
+      try {
+        const adsbygoogle = (window as any).adsbygoogle;
+        const pendingAds = document.querySelectorAll('ins.adsbygoogle:not([data-adsbygoogle-status="done"])');
+        if (adsbygoogle && pendingAds.length > 0) {
+          adsbygoogle.push({});
+        }
+      } catch (e) {
+        console.error("AdSense injection error:", e);
+      }
+    }, 100);
+    return () => clearTimeout(timer);
   }, []);
 
   return (
@@ -509,6 +515,36 @@ export const AdSenseInArticle: React.FC = () => {
         data-ad-format="fluid"
         data-ad-client="ca-pub-8445167187375756"
         data-ad-slot="8734560665"
+      ></ins>
+    </div>
+  );
+};
+
+export const DisplayAd: React.FC = () => {
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      try {
+        const adsbygoogle = (window as any).adsbygoogle;
+        const pendingAds = document.querySelectorAll('ins.adsbygoogle:not([data-adsbygoogle-status="done"])');
+        if (adsbygoogle && pendingAds.length > 0) {
+          adsbygoogle.push({});
+        }
+      } catch (e) {
+        console.error("AdSense display ad injection error:", e);
+      }
+    }, 150); // Slightly different offset to stagger
+    return () => clearTimeout(timer);
+  }, []);
+
+  return (
+    <div className="max-w-7xl mx-auto px-6 my-12 overflow-hidden">
+      <ins 
+        className="adsbygoogle"
+        style={{ display: "block" }}
+        data-ad-client="ca-pub-8445167187375756"
+        data-ad-slot="5377487783"
+        data-ad-format="auto"
+        data-full-width-responsive="true"
       ></ins>
     </div>
   );
