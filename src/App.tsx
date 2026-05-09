@@ -4,7 +4,7 @@
  */
 
 import { motion, useScroll, useSpring } from "motion/react";
-import { Navbar, Hero, ToolCard, ArticleCard, Newsletter, Footer, ArticleReader, AIToolViewer, NewsletterModal } from "./components";
+import { Navbar, Hero, ToolCard, ArticleCard, Newsletter, Footer, ArticleReader, AIToolViewer, NewsletterModal, AdSenseInArticle } from "./components";
 import { AI_TOOLS, ARTICLES, CATEGORIES, Article, AITool } from "./data";
 import { Zap, TrendingUp, DollarSign, Cpu, ArrowRight } from "lucide-react";
 import { useState, useEffect } from "react";
@@ -284,9 +284,7 @@ function AboutPage() {
             {aboutArticle.content.split('\n\n').map((para, i) => {
               if (para === '[AD_SLOT_IN_ARTICLE]') {
                 return (
-                  <div key={i} className="my-12 p-8 border border-dashed border-white/10 rounded-xl text-center text-white/20 text-xs font-bold uppercase tracking-widest">
-                    In-Article Advertisement Placement
-                  </div>
+                  <AdSenseInArticle key={i} />
                 );
               }
               return (

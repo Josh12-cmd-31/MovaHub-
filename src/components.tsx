@@ -490,6 +490,30 @@ export const Newsletter: React.FC<{ onOpenModal?: () => void }> = ({ onOpenModal
   );
 };
 
+export const AdSenseInArticle: React.FC = () => {
+  useEffect(() => {
+    try {
+      // @ts-ignore
+      (window.adsbygoogle = window.adsbygoogle || []).push({});
+    } catch (e) {
+      console.error("AdSense injection error:", e);
+    }
+  }, []);
+
+  return (
+    <div className="my-16 overflow-hidden">
+      <ins 
+        className="adsbygoogle"
+        style={{ display: "block", textAlign: "center" }}
+        data-ad-layout="in-article"
+        data-ad-format="fluid"
+        data-ad-client="ca-pub-8445167187375756"
+        data-ad-slot="8734560665"
+      ></ins>
+    </div>
+  );
+};
+
 export const ArticleReader: React.FC<{ article: Article, onClose: () => void, onNewsletterOpen?: () => void }> = ({ article, onClose, onNewsletterOpen }) => {
   const [fontSize, setFontSize] = useState<"sm" | "md" | "lg" | "xl">("md");
   const [theme, setTheme] = useState<"dark" | "light" | "sepia">("dark");
@@ -656,13 +680,7 @@ export const ArticleReader: React.FC<{ article: Article, onClose: () => void, on
             {article.content?.split('\n\n').map((para, i) => {
               if (para.includes('[AD_SLOT_IN_ARTICLE]')) {
                 return (
-                  <div key={i} className="my-16">
-                    <div className="w-full h-48 bg-white/5 border border-dashed border-white/10 rounded-2xl flex flex-col items-center justify-center text-slate-600 p-10 group hover:border-blue-500/30 transition-colors">
-                       <Zap className="text-blue-500/20 group-hover:text-blue-500 transition-colors mb-4" size={40} />
-                       <span className="text-[10px] font-bold uppercase tracking-[0.4em] mb-3 text-slate-700">Digital Asset Spotlight</span>
-                       <p className="text-xs text-center max-w-sm font-medium leading-relaxed">Boost your productivity with our selected featured software partners. Click to learn more about this integration.</p>
-                    </div>
-                  </div>
+                  <AdSenseInArticle key={i} />
                 );
               }
               return (
