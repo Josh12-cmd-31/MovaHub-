@@ -1,0 +1,28 @@
+{
+  "entities": {
+    "NewsletterSubscription": {
+      "title": "Newsletter Subscription",
+      "description": "User email subscription for the newsletter",
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "Subscriber email address"
+        },
+        "subscribedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp of subscription"
+        }
+      },
+      "required": ["email", "subscribedAt"]
+    }
+  },
+  "firestore": {
+    "/newsletter_subscriptions/{id}": {
+      "schema": "NewsletterSubscription",
+      "description": "Collection of newsletter subscriptions"
+    }
+  }
+}

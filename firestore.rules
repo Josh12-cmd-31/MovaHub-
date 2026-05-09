@@ -1,0 +1,35 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Global Safety Net: Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Common Helpers
+    function isValidId(id) { 
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$'); 
+    }
+    function incoming() { return request.resource.data; }
+    function isSignedIn() { return request.auth != null; }
+
+    // Newsletter Subscriptions
+    match /newsletter_subscriptions/{subId} {
+      allow create: if isValidId(subId) 
+                   && isValidNewsletterSub(incoming());
+      
+      // Allow list/get for system/admin if needed, but for now we keep it minimal.
+      // Usually, public shouldn't read these.
+    }
+
+    function isValidNewsletterSub(data) {
+      return data.keys().hasAll(['email', 'subscribedAt']) 
+             && data.keys().size() == 2
+             && data.email is string 
+             && data.email.size() <= 256
+             && data.email.matches('^[^@]+@[^@]+\\.[^@]+$')
+             && data.subscribedAt == request.time;
+    }
+  }
+}
