@@ -10,13 +10,18 @@
           "format": "email",
           "description": "Subscriber email address"
         },
+        "categories": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Selected topics of interest"
+        },
         "subscribedAt": {
           "type": "string",
           "format": "date-time",
           "description": "Timestamp of subscription"
         }
       },
-      "required": ["email", "subscribedAt"]
+      "required": ["email", "subscribedAt", "categories"]
     }
   },
   "firestore": {

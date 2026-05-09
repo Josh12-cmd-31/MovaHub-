@@ -56,11 +56,12 @@ export function handleFirestoreError(error: unknown, operationType: OperationTyp
   throw new Error(JSON.stringify(errInfo));
 }
 
-export const subscribeToNewsletter = async (email: string) => {
+export const subscribeToNewsletter = async (email: string, categories: string[]) => {
   const path = 'newsletter_subscriptions';
   try {
     await addDoc(collection(db, path), {
       email,
+      categories,
       subscribedAt: serverTimestamp()
     });
   } catch (error) {

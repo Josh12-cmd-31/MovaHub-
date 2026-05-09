@@ -24,11 +24,13 @@ service cloud.firestore {
     }
 
     function isValidNewsletterSub(data) {
-      return data.keys().hasAll(['email', 'subscribedAt']) 
-             && data.keys().size() == 2
+      return data.keys().hasAll(['email', 'subscribedAt', 'categories']) 
+             && data.keys().size() == 3
              && data.email is string 
              && data.email.size() <= 256
              && data.email.matches('^[^@]+@[^@]+\\.[^@]+$')
+             && data.categories is list
+             && data.categories.size() <= 10
              && data.subscribedAt == request.time;
     }
   }
