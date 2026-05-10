@@ -4,7 +4,7 @@
  */
 
 import { motion, useScroll, useSpring } from "motion/react";
-import { Navbar, Hero, ToolCard, ArticleCard, Newsletter, Footer, ArticleReader, AIToolViewer, NewsletterModal, AdSenseInArticle, DisplayAd } from "./components";
+import { Navbar, Hero, ToolCard, ArticleCard, Newsletter, Footer, ArticleReader, AIToolViewer, NewsletterModal, AdSenseInArticle, DisplayAd, StickyFooterCTA } from "./components";
 import { AI_TOOLS, ARTICLES, CATEGORIES, Article, AITool } from "./data";
 import { Zap, TrendingUp, DollarSign, Cpu, ArrowRight } from "lucide-react";
 import { useState, useEffect } from "react";
@@ -350,6 +350,7 @@ export default function App() {
         </main>
 
         <DisplayAd />
+        <StickyFooterCTA onOpenModal={() => setIsNewsletterModalOpen(true)} />
         <Footer />
 
         {/* Floating Action / Social Sharing Sidebar (Mock) */}

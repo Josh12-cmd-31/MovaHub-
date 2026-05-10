@@ -809,3 +809,62 @@ export const Footer: React.FC = () => {
     </footer>
   );
 };
+
+export const StickyFooterCTA: React.FC<{ onOpenModal?: () => void }> = ({ onOpenModal }) => {
+  const [isVisible, setIsVisible] = useState(false);
+  const [isDismissed, setIsDismissed] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (isDismissed) return;
+      setIsVisible(window.scrollY > 1200);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [isDismissed]);
+
+  if (isDismissed) return null;
+
+  return (
+    <motion.div
+      initial={{ y: 100, opacity: 0 }}
+      animate={{ y: isVisible ? 0 : 100, opacity: isVisible ? 1 : 0 }}
+      transition={{ type: "spring", damping: 20, stiffness: 100 }}
+      className="fixed bottom-6 left-6 right-6 z-40"
+    >
+      <div className="max-w-4xl mx-auto glass border border-white/10 rounded-2xl p-4 md:p-5 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-4 md:gap-6 overflow-hidden relative group">
+        {/* Background decorative elements */}
+        <div className="absolute -top-12 -right-12 w-32 h-32 bg-blue-500/10 blur-[60px] pointer-events-none group-hover:bg-blue-500/20 transition-all duration-700" />
+        <div className="absolute -bottom-12 -left-12 w-32 h-32 bg-purple-500/10 blur-[60px] pointer-events-none group-hover:bg-purple-500/20 transition-all duration-700" />
+
+        <div className="flex items-center gap-4 md:gap-5 relative z-10 w-full md:w-auto">
+           <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-blue-500/20 shrink-0">
+             <Zap size={20} className="fill-current md:w-6 md:h-6" />
+           </div>
+           <div>
+             <h4 className="text-white font-bold text-base md:text-lg leading-tight mb-0.5">Scale Your Revenue with AI</h4>
+             <p className="text-slate-400 text-xs md:text-sm">Join 50k+ readers for weekly alpha.</p>
+           </div>
+        </div>
+
+        <div className="flex items-center gap-3 w-full md:w-auto relative z-10">
+          <button 
+            onClick={onOpenModal}
+            className="flex-1 md:flex-none px-6 py-3 bg-white text-black font-black text-xs uppercase tracking-[0.2em] rounded-xl hover:bg-blue-600 hover:text-white transition-all shadow-lg"
+          >
+            Join Free
+          </button>
+          <button 
+            className="w-11 h-11 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl flex items-center justify-center text-slate-400 hover:text-white transition-all"
+            onClick={() => {
+              setIsVisible(false);
+              setIsDismissed(true);
+            }}
+          >
+            <X size={18} />
+          </button>
+        </div>
+      </div>
+    </motion.div>
+  );
+};
