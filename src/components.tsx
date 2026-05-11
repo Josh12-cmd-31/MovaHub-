@@ -491,26 +491,73 @@ export const Newsletter: React.FC<{ onOpenModal?: () => void }> = ({ onOpenModal
 };
 
 export const AdSenseInArticle: React.FC = () => {
+  const adRef = React.useRef<HTMLDivElement>(null);
+  const [adInitialized, setAdInitialized] = useState(false);
+
   useEffect(() => {
-    const timer = setTimeout(() => {
+    if (adInitialized) return;
+
+    let resizeObserver: ResizeObserver | null = null;
+    let intersectionObserver: IntersectionObserver | null = null;
+
+    const initAd = () => {
       try {
         const adsbygoogle = (window as any).adsbygoogle;
-        const pendingAds = document.querySelectorAll('ins.adsbygoogle:not([data-adsbygoogle-status="done"])');
-        if (adsbygoogle && pendingAds.length > 0) {
+        const ins = adRef.current?.querySelector('ins');
+        
+        // Detailed check for readiness
+        if (!adsbygoogle || !ins || ins.getAttribute('data-adsbygoogle-status') === 'done') return false;
+        
+        const width = adRef.current?.offsetWidth || 0;
+        if (width > 0) {
           adsbygoogle.push({});
+          setAdInitialized(true);
+          return true;
         }
       } catch (e) {
-        console.error("AdSense injection error:", e);
+        console.error("AdSense in-article injection error:", e);
       }
-    }, 100);
-    return () => clearTimeout(timer);
-  }, []);
+      return false;
+    };
+
+    if (adRef.current) {
+      // Intersection observer to wait until it's in viewport
+      intersectionObserver = new IntersectionObserver((entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            initAd();
+          }
+        }
+      }, { threshold: 0.1 });
+      intersectionObserver.observe(adRef.current);
+
+      // Resize observer to wait until it has width
+      resizeObserver = new ResizeObserver((entries) => {
+        for (const entry of entries) {
+          if (entry.contentRect.width > 0) {
+            if (initAd()) {
+              resizeObserver?.disconnect();
+            }
+          }
+        }
+      });
+      resizeObserver.observe(adRef.current);
+    }
+
+    const timer = setTimeout(initAd, 3000);
+
+    return () => {
+      intersectionObserver?.disconnect();
+      resizeObserver?.disconnect();
+      clearTimeout(timer);
+    };
+  }, [adInitialized]);
 
   return (
-    <div className="my-16 overflow-hidden">
+    <div ref={adRef} className="my-16 overflow-hidden min-h-[100px] flex justify-center">
       <ins 
         className="adsbygoogle"
-        style={{ display: "block", textAlign: "center" }}
+        style={{ display: "block", textAlign: "center", width: "100%" }}
         data-ad-layout="in-article"
         data-ad-format="fluid"
         data-ad-client="ca-pub-8445167187375756"
@@ -521,26 +568,70 @@ export const AdSenseInArticle: React.FC = () => {
 };
 
 export const DisplayAd: React.FC = () => {
+  const adRef = React.useRef<HTMLDivElement>(null);
+  const [adInitialized, setAdInitialized] = useState(false);
+
   useEffect(() => {
-    const timer = setTimeout(() => {
+    if (adInitialized) return;
+
+    let resizeObserver: ResizeObserver | null = null;
+    let intersectionObserver: IntersectionObserver | null = null;
+
+    const initAd = () => {
       try {
         const adsbygoogle = (window as any).adsbygoogle;
-        const pendingAds = document.querySelectorAll('ins.adsbygoogle:not([data-adsbygoogle-status="done"])');
-        if (adsbygoogle && pendingAds.length > 0) {
+        const ins = adRef.current?.querySelector('ins');
+        
+        if (!adsbygoogle || !ins || ins.getAttribute('data-adsbygoogle-status') === 'done') return false;
+        
+        const width = adRef.current?.offsetWidth || 0;
+        if (width > 0) {
           adsbygoogle.push({});
+          setAdInitialized(true);
+          return true;
         }
       } catch (e) {
         console.error("AdSense display ad injection error:", e);
       }
-    }, 150); // Slightly different offset to stagger
-    return () => clearTimeout(timer);
-  }, []);
+      return false;
+    };
+
+    if (adRef.current) {
+      intersectionObserver = new IntersectionObserver((entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            initAd();
+          }
+        }
+      }, { threshold: 0.1 });
+      intersectionObserver.observe(adRef.current);
+
+      resizeObserver = new ResizeObserver((entries) => {
+        for (const entry of entries) {
+          if (entry.contentRect.width > 0) {
+            if (initAd()) {
+              resizeObserver?.disconnect();
+            }
+          }
+        }
+      });
+      resizeObserver.observe(adRef.current);
+    }
+
+    const timer = setTimeout(initAd, 3500);
+
+    return () => {
+      intersectionObserver?.disconnect();
+      resizeObserver?.disconnect();
+      clearTimeout(timer);
+    };
+  }, [adInitialized]);
 
   return (
-    <div className="max-w-7xl mx-auto px-6 my-12 overflow-hidden">
+    <div ref={adRef} className="max-w-7xl mx-auto px-6 my-12 overflow-hidden min-h-[250px] flex justify-center">
       <ins 
         className="adsbygoogle"
-        style={{ display: "block" }}
+        style={{ display: "block", width: "100%" }}
         data-ad-client="ca-pub-8445167187375756"
         data-ad-slot="5377487783"
         data-ad-format="auto"
